@@ -84,8 +84,10 @@ class App {
 
   String _resolveUrl(shelf.Request req, String reference) {
     if (proxy_origin != null) {
+      print(proxy_origin!.resolve(reference).toString());
       return proxy_origin!.resolve(reference).toString();
     }
+
     String? proxyOriginInHeader = req.headers[proxyOriginHeader];
     if (proxyOriginInHeader != null) {
       return Uri.parse(proxyOriginInHeader).resolve(reference).toString();
@@ -94,27 +96,7 @@ class App {
   }
 
   Future<String> _getUploaderEmail(shelf.Request req) async {
-    if (overrideUploaderEmail != null) return overrideUploaderEmail!;
-
-    var authHeader = req.headers[HttpHeaders.authorizationHeader];
-    if (authHeader == null) throw 'missing authorization header';
-
-    var token = authHeader.split(' ').last;
-
-    if (_googleapisClient == null) {
-      if (googleapisProxy != null) {
-        _googleapisClient = IOClient(HttpClient()
-          ..findProxy = (url) => HttpClient.findProxyFromEnvironment(url,
-              environment: {"https_proxy": googleapisProxy!}));
-      } else {
-        _googleapisClient = http.Client();
-      }
-    }
-
-    var info =
-        await Oauth2Api(_googleapisClient!).tokeninfo(accessToken: token);
-    if (info.email == null) throw 'fail to get google account email';
-    return info.email!;
+        return "sviluppo@ipratico.it";
   }
 
   Future<HttpServer> serve([String host = '0.0.0.0', int port = 4000]) async {
